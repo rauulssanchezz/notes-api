@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                // Generamos un reporte de tests si quieres (opcional)
+                sh 'set -o pipefail; python manage.py test | tee tests_report.txt'
+            }
+        }
+
+        stage('Security: Dependencies (Safety)') {
+            steps {
+                // 'tee' muestra el resultado en pantalla Y lo guarda en el archivo
+                // PIPESTATUS asegura que si safety falla, el stage falle
+                sh 'set -o pipefail; safety scan | tee safety_report.txt'
+            }
+        }
+
+        stage('Security: Code (Bandit)') {
+            steps {
+                sh 'set -o pipefail; bandit -r . -x ./venv,./**/tests.py -ll | tee bandit_report.txt'
+            }
+        }
+
+        stage('Django Deployment Check') {
+            steps {
+                sh 'set -o pipefail; python manage.py check --deploy | tee check_report.txt'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Esto guarda los archivos en el servidor de Jenkins para que los descargues
+            archiveArtifacts artifacts: '*.txt', allowEmptyArchive: true
+            echo 'Finalizando pipeline...'
+        }
+        failure {
+            echo '❌ La validación ha fallado. Revisa los archivos guardados en "Artifacts".'
+        }
+    }
+}
