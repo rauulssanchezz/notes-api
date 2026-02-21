@@ -31,7 +31,7 @@ pipeline {
             steps {
                 // 'tee' muestra el resultado en pantalla Y lo guarda en el archivo
                 // PIPESTATUS asegura que si pip-audit falla, el stage falle
-                sh 'set -o pipefail; pip-audit --ignore-package pip --ignore-package wheel | tee audit_report.txt'
+                sh 'pip-audit | tee audit_report.txt'
             }
         }
 
