@@ -52,6 +52,11 @@ pipeline {
         always {
             // Esto guarda los archivos en el servidor de Jenkins para que los descargues
             archiveArtifacts artifacts: '*.txt', allowEmptyArchive: true
+            step (
+                [
+                    $class: 'GitHubCommitStatusSetter', statusDescription: 'Jenkins Build'
+                ]
+            )
             echo 'Finalizando pipeline...'
         }
         failure {
