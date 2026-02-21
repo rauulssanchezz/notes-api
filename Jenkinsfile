@@ -13,7 +13,7 @@ pipeline {
                 sh 'cp $ENV_FILE .env'
             }
         }
-        
+
         stage('Install Dependencies') {
             steps {
                 sh 'pip install --break-system-packages -r requirements.txt'
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 // 'tee' muestra el resultado en pantalla Y lo guarda en el archivo
                 // PIPESTATUS asegura que si safety falla, el stage falle
-                sh 'set -o pipefail; safety scan | tee safety_report.txt'
+                sh 'set -o pipefail; safety check --output text --non-interactive | tee safety_report.txt'
             }
         }
 
