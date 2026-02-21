@@ -31,7 +31,7 @@ pipeline {
             steps {
                 // 'tee' muestra el resultado en pantalla Y lo guarda en el archivo
                 // PIPESTATUS asegura que si safety falla, el stage falle
-                sh 'set -o pipefail; safety check --output text | tee safety_report.txt'
+                sh 'set -o pipefail; safety scan --output text | tee safety_report.txt'
             }
         }
 
