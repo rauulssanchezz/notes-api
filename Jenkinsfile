@@ -1,7 +1,19 @@
 pipeline {
     agent any
 
+    environment {
+        // Esto crea una ruta temporal hacia el archivo secreto
+        ENV_FILE = credentials('api-env-file')
+    }
+
     stages {
+        stage('Setup Environment') {
+            steps {
+                // Copiamos el archivo secreto al directorio de trabajo como ".env"
+                sh 'cp $ENV_FILE .env'
+            }
+        }
+        
         stage('Install Dependencies') {
             steps {
                 sh 'pip install --break-system-packages -r requirements.txt'
