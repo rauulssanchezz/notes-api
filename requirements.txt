@@ -4,4 +4,4 @@ psycopg2-binary
 django-environ
 django-filter
 bandit
-safety
+pip-audit

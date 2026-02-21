@@ -27,11 +27,11 @@ pipeline {
             }
         }
 
-        stage('Security: Dependencies (Safety)') {
+        stage('Security: Dependencies (pip-audit)') {
             steps {
                 // 'tee' muestra el resultado en pantalla Y lo guarda en el archivo
-                // PIPESTATUS asegura que si safety falla, el stage falle
-                sh 'set -o pipefail; safety scan --output text | tee safety_report.txt'
+                // PIPESTATUS asegura que si pip-audit falla, el stage falle
+                sh 'set -o pipefail; pip-audit | tee audit_report.txt'
             }
         }
 
