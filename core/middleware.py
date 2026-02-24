@@ -7,6 +7,10 @@ class AndroidIdMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+
+        if request.path.startswith('/admin/'):
+            return self.get_response(request)
+        
         android_id = request.headers.get('X-Android-ID')
 
         if android_id != settings.SECRET_KEY_ANDROID_ID:
