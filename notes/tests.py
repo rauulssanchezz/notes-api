@@ -3,10 +3,12 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from .models import Note
+from django.conf import settings
 
 class NoteAPITests(APITestCase):
 
     def setUp(self):
+        self.client.credentials(HTTP_X_ANDROID_ID=settings.SECRET_KEY_ANDROID_ID)
         # Creamos dos usuarios para probar que uno no puede ver lo del otro
         self.user1 = User.objects.create_user(username='user1', password='password123')
         self.user2 = User.objects.create_user(username='user2', password='password123')

@@ -3,10 +3,13 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.urls import reverse
+from django.conf import settings
 
 class UserApiTests(APITestCase):
 
     def setUp(self):
+        self.android_header = {'HTTP_X_ANDROID_ID': settings.SECRET_KEY_ANDROID_ID}
+        self.client.credentials(**self.android_header)
         # Creamos un usuario en la base de datos de pruebas (que está limpia)
         self.user = User.objects.create_user(username='raul', password='password123')
         # Creamos un token para este usuario manualmente para poder usarlo luego
@@ -24,7 +27,10 @@ class UserApiTests(APITestCase):
 
     def test_get_own_profile(self):
         # Ponemos el token en la cabecera
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.token.key,
+            **self.android_header
+        )
         response = self.client.get(self.profile_url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -32,7 +38,10 @@ class UserApiTests(APITestCase):
         self.assertEqual(response.data['username'], 'raul')
 
     def test_logout_works(self):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.token.key,
+            **self.android_header
+        )
         self.client.post(reverse('logout'))
         
         # Intentamos buscar el token en la DB. Si se ha borrado, .exists() será False.
