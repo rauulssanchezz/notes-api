@@ -8,3 +8,11 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ['id','user', 'title', 'content', 'created_at']
         read_only_fields = ['id', 'created_at', 'user']
+        extra_kwargs = {
+            'title': {
+                'error_messages': {
+                    'required': 'La nota necesita un título.',
+                    'blank': 'El título no puede estar vacío.'
+                }
+            }
+        }
